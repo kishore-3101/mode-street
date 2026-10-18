@@ -1,7 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { Shirt, Layers, Boxes, ShoppingCart, LogOut, ArrowUpRight } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth.js';
-import logoImg from '../../assets/logo.png';
 import { cn } from '../../lib/utils.js';
 
 interface SidebarProps {
@@ -9,126 +8,148 @@ interface SidebarProps {
   className?: string;
 }
 
+const navGroups = [
+  {
+    label: 'Catalogue',
+    items: [
+      { to: '/admin/products', label: 'Products', icon: Shirt },
+      { to: '/admin/categories', label: 'Categories', icon: Layers },
+      { to: '/admin/inventory', label: 'Inventory', icon: Boxes },
+    ],
+  },
+  {
+    label: 'Sales',
+    items: [{ to: '/admin/orders', label: 'Orders', icon: ShoppingCart, badge: 'Soon' }],
+  },
+];
+
+const focusRing =
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel';
+
 export function Sidebar({ onNavigate, className }: SidebarProps) {
   const { admin, logout } = useAuth();
-
-  const navItems = [
-    {
-      to: '/admin/products',
-      label: 'Products',
-      icon: Shirt,
-    },
-    {
-      to: '/admin/categories',
-      label: 'Categories',
-      icon: Layers,
-    },
-    {
-      to: '/admin/inventory',
-      label: 'Inventory',
-      icon: Boxes,
-    },
-    {
-      to: '/admin/orders',
-      label: 'Orders',
-      icon: ShoppingCart,
-      badge: 'Soon',
-    },
-  ];
+  const initial = (admin?.email?.[0] ?? 'A').toUpperCase();
 
   return (
     <aside
-      className={cn(
-        'w-64 bg-espresso text-cream flex flex-col justify-between shrink-0 h-full border-r border-espresso-light',
-        className
-      )}
+      className={cn('flex h-full w-64 shrink-0 flex-col bg-espresso text-cream', className)}
     >
-      <div>
-        {/* Brand Header with Logo on Cream Plate */}
-        <div className="p-5 border-b border-white/10">
-          <NavLink
-            to="/admin/products"
-            onClick={onNavigate}
-            className="block group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel rounded-lg"
-          >
-            <div className="bg-cream rounded-lg p-2.5 shadow-xs flex items-center justify-center transition-transform duration-150 group-hover:scale-[1.02]">
-              <img
-                src={logoImg}
-                alt="Mode Street"
-                className="h-10 w-auto object-contain"
-              />
-            </div>
-            <div className="mt-2 text-center">
-              <span className="text-[11px] font-sans uppercase tracking-[0.2em] text-sand-light/80">
-                Admin Console
-              </span>
-            </div>
-          </NavLink>
-        </div>
-
-        {/* Navigation Links */}
-        <nav className="p-4 space-y-1.5" aria-label="Admin Navigation">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                onClick={onNavigate}
-                className={({ isActive }) =>
-                  cn(
-                    'flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel',
-                    isActive
-                      ? 'bg-camel/20 text-cream border-l-4 border-camel font-semibold pl-2.5'
-                      : 'text-sand-light/80 hover:bg-white/5 hover:text-cream'
-                  )
-                }
-              >
-                <div className="flex items-center gap-3">
-                  <Icon className="w-4 h-4 text-camel" />
-                  <span>{item.label}</span>
-                </div>
-                {item.badge && (
-                  <span className="text-[10px] font-sans uppercase tracking-wider bg-camel/30 text-sand-light px-1.5 py-0.5 rounded font-semibold">
-                    {item.badge}
-                  </span>
-                )}
-              </NavLink>
-            );
-          })}
-        </nav>
+      {/* Brand */}
+      {/* Brand */}
+      <div className="px-6 pb-5 pt-7">
+        <NavLink
+          to="/admin/products"
+          onClick={onNavigate}
+          className={cn('mx-auto block w-44 rounded', focusRing)}
+        >
+          <img
+            src="/logo-light.png"
+            alt="Mode Street"
+            className="h-auto w-full object-contain"
+          />
+        </NavLink>
       </div>
 
-      {/* User profile & footer */}
-      <div className="p-4 border-t border-white/10 space-y-3">
+      {/* Navigation */}
+      <nav className="flex-1 space-y-7 overflow-y-auto px-4" aria-label="Admin navigation">
+        {navGroups.map((group) => (
+          <div key={group.label}>
+            <div className="mb-2.5 flex items-center gap-3 px-3">
+              <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-cream/40">
+                {group.label}
+              </p>
+              <span className="h-px flex-1 bg-cream/10" />
+            </div>
+
+            <ul className="space-y-1">
+              {group.items.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <li key={item.to}>
+                    <NavLink
+                      to={item.to}
+                      onClick={onNavigate}
+                      className={({ isActive }) =>
+                        cn(
+                          'group relative flex items-center gap-3 rounded-md px-3 py-2.5 text-[15px] transition-colors',
+                          focusRing,
+                          isActive
+                            ? 'bg-cream/[0.08] font-medium text-cream'
+                            : 'text-cream/60 hover:bg-cream/[0.04] hover:text-cream'
+                        )
+                      }
+                    >
+                      {({ isActive }) => (
+                        <>
+                          {/* Active marker, flush with the sidebar edge */}
+                          {isActive && (
+                            <span
+                              aria-hidden="true"
+                              className="absolute -left-4 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r bg-camel"
+                            />
+                          )}
+                          <Icon
+                            className={cn(
+                              'h-[18px] w-[18px] shrink-0 transition-colors',
+                              isActive ? 'text-sand' : 'text-cream/50 group-hover:text-cream/80'
+                            )}
+                            strokeWidth={1.6}
+                            aria-hidden="true"
+                          />
+                          <span className="flex-1">{item.label}</span>
+                          {'badge' in item && item.badge && (
+                            <span className="text-[10px] uppercase tracking-[0.14em] text-cream/35">
+                              {item.badge}
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </NavLink>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </nav>
+
+      {/* Footer */}
+      <div className="px-4 pb-5 pt-4">
         <NavLink
           to="/"
           target="_blank"
           rel="noreferrer"
-          className="flex items-center justify-between px-3 py-2 rounded-lg text-xs text-sand-light/70 hover:text-cream hover:bg-white/5 transition-colors"
+          className={cn(
+            'flex items-center gap-3 rounded-md px-3 py-2 text-sm text-cream/60 transition-colors hover:bg-cream/[0.04] hover:text-cream',
+            focusRing
+          )}
         >
-          <span>View Storefront</span>
-          <ArrowUpRight className="w-3.5 h-3.5" />
+          <span className="flex-1">View storefront</span>
+          <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden="true" />
         </NavLink>
 
-        <div className="px-3 py-2 bg-white/5 rounded-lg flex items-center justify-between">
-          <div className="truncate mr-2">
-            <p className="text-[11px] uppercase tracking-wider text-sand-light/60 font-semibold">
-              Logged in as
-            </p>
-            <p className="text-xs text-cream truncate font-mono">
-              {admin?.email || 'admin@modestreet.com'}
-            </p>
+        <div className="mt-3 flex items-center gap-3 border-t border-cream/10 px-3 pt-4">
+          <div
+            aria-hidden="true"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-camel text-sm font-semibold text-espresso"
+          >
+            {initial}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-[13px] text-cream/90">{admin?.email}</p>
+            <p className="text-[11px] text-cream/40">Administrator</p>
           </div>
           <button
             type="button"
             onClick={logout}
-            aria-label="Logout"
-            title="Logout"
-            className="p-1.5 text-sand-light/70 hover:text-danger hover:bg-white/10 rounded-md transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel"
+            aria-label="Sign out"
+            title="Sign out"
+            className={cn(
+              'cursor-pointer rounded-md p-2 text-cream/50 transition-colors hover:bg-cream/[0.06] hover:text-cream',
+              focusRing
+            )}
           >
-            <LogOut className="w-4 h-4" />
+            <LogOut className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
           </button>
         </div>
       </div>
