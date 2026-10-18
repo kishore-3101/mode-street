@@ -1,8 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
-import { Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth.js';
-import { Button, Input } from '../../components/ui/index.js';
 import logoImg from '../../assets/logo.png';
 import { getApiErrorMessage } from '../../lib/utils.js';
 
@@ -12,7 +10,6 @@ export function LoginPage() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -43,90 +40,77 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-cream flex flex-col items-center justify-center p-4 sm:p-6 selection:bg-camel/30">
-      <div className="w-full max-w-md">
-        {/* Card */}
-        <div className="bg-cream-surface border border-sand rounded-2xl p-6 sm:p-8 shadow-sm">
-          {/* Brand Logo Presentation */}
-          <div className="flex flex-col items-center mb-6">
-            <div className="p-3 bg-cream rounded-xl border border-sand/60 shadow-2xs mb-3">
-              <img
-                src={logoImg}
-                alt="Mode Street"
-                className="h-12 w-auto object-contain"
-              />
-            </div>
-            <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-espresso">
-              Admin Portal
-            </h1>
-            <p className="text-xs sm:text-sm text-espresso/70 mt-1">
-              Sign in to manage catalog, inventory and orders
-            </p>
-          </div>
-
-          {/* Error Banner */}
-          {error && (
-            <div
-              role="alert"
-              className="mb-5 p-3 rounded-lg bg-danger-bg border border-[#E8C6C3] flex items-start gap-2.5 text-xs sm:text-sm text-danger animate-in fade-in duration-150"
-            >
-              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-              <span>{error}</span>
-            </div>
-          )}
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              id="admin-email"
-              type="email"
-              label="Email Address"
-              placeholder="admin@modestreet.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              autoFocus
-              leftElement={<Mail className="w-4 h-4" />}
-            />
-
-            <Input
-              id="admin-password"
-              type={showPassword ? 'text' : 'password'}
-              label="Password"
-              placeholder="••••••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              leftElement={<Lock className="w-4 h-4" />}
-              rightElement={
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  className="p-1 hover:text-espresso transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel rounded"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              }
-            />
-
-            <Button
-              type="submit"
-              variant="primary"
-              size="lg"
-              className="w-full mt-2"
-              isLoading={isLoading}
-            >
-              Sign In to Console
-            </Button>
-          </form>
+    <div className="min-h-screen bg-[#F6F0E8] flex items-center justify-center p-4 selection:bg-[#B99A7A]/30">
+      <div className="w-full max-w-[390px] border border-[#3B2925]/35 rounded-[32px] px-8 pt-10 pb-10 bg-[#F6F0E8]">
+        {/* Brand Logo Presentation */}
+        <div className="flex justify-center mb-8">
+          <img
+            src={logoImg}
+            alt="Mode Street - Wear Your Story"
+            className="w-48 max-w-[190px] h-auto object-contain"
+          />
         </div>
 
-        {/* Demo note */}
-        <p className="mt-6 text-center text-xs text-espresso/60 font-mono">
-          Mode Street Fashion E-Commerce • Back-Office
-        </p>
+        {/* Error message */}
+        {error && (
+          <div
+            role="alert"
+            className="mb-4 p-2.5 rounded-xl bg-[#FAECF0] border border-[#E8C6C3] text-xs text-[#8E2333] text-center"
+          >
+            {error}
+          </div>
+        )}
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-[11px] font-bold tracking-wider text-[#3B2925] uppercase mb-1.5"
+            >
+              EMAIL
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="enter your email"
+              required
+              autoFocus
+              className="w-full bg-white text-[#3B2925] rounded-xl px-4 py-3 text-sm placeholder:text-stone-300 focus:outline-none focus:ring-1 focus:ring-[#3B2925]/40 transition-all border border-transparent shadow-none"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-[11px] font-bold tracking-wider text-[#3B2925] uppercase mb-1.5"
+            >
+              PASSWORD
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="·············"
+              required
+              className="w-full bg-white text-[#3B2925] rounded-xl px-4 py-3 text-sm placeholder:text-stone-300 focus:outline-none focus:ring-1 focus:ring-[#3B2925]/40 transition-all border border-transparent shadow-none"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full bg-[#3B2925] hover:bg-[#2A1D1A] text-white text-xs font-bold tracking-wider py-3.5 rounded-xl uppercase transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed mt-6"
+          >
+            {isLoading ? 'SIGNING IN...' : 'SIGN IN'}
+          </button>
+        </form>
       </div>
     </div>
   );
 }
+
+export default LoginPage;

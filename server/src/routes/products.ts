@@ -8,18 +8,16 @@ import { createProductSchema, updateProductSchema, updateStockSchema, productIdP
 export const productsRouter = Router();
 export const adminProductsRouter = Router();
 // Helper to format product with sorted images
-function formatProduct(product: any) {
+function formatProduct(product) {
     if (product.images && Array.isArray(product.images)) {
-        product.images.sort((a: any, b: any) => a.position - b.position);
+        product.images.sort((a, b) => a.position - b.position);
     }
     return product;
 }
 // Handler for Admin listing all products (including inactive)
-async function handleAdminListProducts(req: any, res: any, next: any) {
+async function handleAdminListProducts(req, res, next) {
     try {
-        const search = typeof req.query.search === 'string' ? req.query.search : undefined;
-        const page = Number(req.query.page) || 1;
-        const limit = Number(req.query.limit) || 20;
+        const { search, page = 1, limit = 20 } = req.query;
         let query = supabase
             .from('products')
             .select('*, category:categories(id, name, slug), images:product_images(id, url, path, position), variants:product_variants(id, size, stock)', { count: 'exact' });
@@ -38,7 +36,7 @@ async function handleAdminListProducts(req: any, res: any, next: any) {
             return;
         }
         res.setHeader('X-Total-Count', count ?? 0);
-        const formatted = (products ?? []).map((p: any) => formatProduct(p));
+        const formatted = (products ?? []).map((p) => formatProduct(p));
         res.json(formatted);
     }
     catch (err) {
@@ -52,10 +50,7 @@ productsRouter.get('/admin', requireAdmin, validate({ query: adminProductQuerySc
 // GET /api/products - Public: list active products
 productsRouter.get('/', validate({ query: productQuerySchema }), async (req, res, next) => {
     try {
-        const category = typeof req.query.category === 'string' ? req.query.category : undefined;
-        const search = typeof req.query.search === 'string' ? req.query.search : undefined;
-        const page = Number(req.query.page) || 1;
-        const limit = Number(req.query.limit) || 20;
+        const { category, search, page = 1, limit = 20 } = req.query;
         let categoryId = null;
         if (category) {
             const { data: cat, error: catError } = await supabase
@@ -222,7 +217,7 @@ productsRouter.post('/', requireAdmin, validate({ body: createProductSchema }), 
 // PUT /api/products/:id - Admin: update product
 productsRouter.put('/:id', requireAdmin, validate({ params: productIdParamSchema, body: updateProductSchema }), async (req, res, next) => {
     try {
-        const id = String(req.params.id);
+        const id = req.params.id;
         const body = req.body;
         // Check if product exists
         const { data: existing, error: findError } = await supabase
@@ -251,7 +246,7 @@ productsRouter.put('/:id', requireAdmin, validate({ params: productIdParamSchema
                 return;
             }
         }
-        const updateData: any = {
+        const updateData = {
             updated_at: new Date().toISOString(),
         };
         if (body.name !== undefined) {

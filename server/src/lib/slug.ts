@@ -1,6 +1,5 @@
 import { supabase } from './supabase.js';
-
-export function createBaseSlug(text: string) {
+export function createBaseSlug(text) {
     const slug = text
         .toLowerCase()
         .trim()
@@ -10,8 +9,7 @@ export function createBaseSlug(text: string) {
         .replace(/^-+|-+$/g, ''); // remove leading/trailing -
     return slug || 'item';
 }
-
-export async function generateUniqueSlug(table: any, name: string, excludeId?: string) {
+export async function generateUniqueSlug(table, name, excludeId) {
     const baseSlug = createBaseSlug(name);
     let candidate = baseSlug;
     let counter = 1;
