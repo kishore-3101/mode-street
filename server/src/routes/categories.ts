@@ -77,7 +77,7 @@ router.post('/', requireAdmin, validate({ body: createCategorySchema }), async (
 // PUT /api/categories/:id - Admin: update category
 router.put('/:id', requireAdmin, validate({ params: categoryIdParamSchema, body: updateCategorySchema }), async (req, res, next) => {
     try {
-        const id = req.params.id;
+        const id = String(req.params.id);
         const body = req.body;
         // Check if category exists
         const { data: existing, error: findError } = await supabase
@@ -94,7 +94,7 @@ router.put('/:id', requireAdmin, validate({ params: categoryIdParamSchema, body:
             res.status(404).json({ error: 'Category not found' });
             return;
         }
-        const updateData = {};
+        const updateData: any = {};
         if (body.name !== undefined) {
             updateData.name = body.name;
             if (body.name !== existing.name) {

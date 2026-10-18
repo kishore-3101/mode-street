@@ -2,7 +2,14 @@ import axios from 'axios';
 
 export const TOKEN_STORAGE_KEY = 'mode_street_token';
 
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const getBaseUrl = (): string => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (!envUrl) return 'http://localhost:5000/api';
+  const trimmed = envUrl.replace(/\/+$/, '');
+  return trimmed.endsWith('/api') ? trimmed : `${trimmed}/api`;
+};
+
+const baseURL = getBaseUrl();
 
 export const apiClient = axios.create({
   baseURL,
