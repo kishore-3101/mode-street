@@ -8,64 +8,34 @@ import productsRouter, { adminProductsRouter } from './routes/products.js';
 import uploadsRouter from './routes/uploads.js';
 import ordersRouter from './routes/orders.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
-
 const app = express();
-
 // Security and utility middleware
 app.use(helmet());
 app.use(cors({
-    origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps, curl, or server-to-server)
-        if (!origin) return callback(null, true);
-
-        const configuredOrigins = env.CLIENT_URL
-            ? env.CLIENT_URL.split(',').map((url) => url.trim())
-            : [];
-
-        if (
-            configuredOrigins.includes(origin) ||
-            configuredOrigins.includes('*') ||
-            origin.endsWith('.vercel.app') ||
-            origin.startsWith('http://localhost:') ||
-            origin.startsWith('http://127.0.0.1:')
-        ) {
-            return callback(null, true);
-        }
-
-        return callback(new Error(`Origin ${origin} not allowed by CORS`));
-    },
+    origin: env.CLIENT_URL,
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 }));
-
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
-
 // Health check endpoint
-app.get(['/api/health', '/health'], (_req, res) => {
+app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
-
-// API Routes (mount on both /api/... and /... for maximum compatibility)
-app.use(['/api/auth', '/auth'], authRouter);
-app.use(['/api/categories', '/categories'], categoriesRouter);
-app.use(['/api/admin/products', '/admin/products'], adminProductsRouter);
-app.use(['/api/products', '/products'], productsRouter);
-app.use(['/api/uploads', '/uploads'], uploadsRouter);
-app.use(['/api/orders', '/orders'], ordersRouter);
-
+// API Routes
+app.use('/api/auth', authRouter);
+app.use('/api/categories', categoriesRouter);
+app.use('/api/admin/products', adminProductsRouter);
+app.use('/api/products', productsRouter);
+app.use('/api/uploads', uploadsRouter);
+app.use('/api/orders', ordersRouter);
 // 404 handler
 app.use(notFoundHandler);
-
 // Central error handler
 app.use(errorHandler);
-
 // App bootstrap
-if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
+if (process.env.NODE_ENV !== 'test') {
     app.listen(env.PORT, () => {
         console.log(`Server listening on port ${env.PORT}`);
     });
 }
-
 export default app;
