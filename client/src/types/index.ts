@@ -99,3 +99,21 @@ export interface LoginResponse {
 export interface ApiError {
   error: string;
 }
+
+export interface StorefrontProductsParams {
+  limit?: number;
+  page?: number;
+  category?: string;
+  search?: string;
+}
+
+export interface CartItem {
+  variantId: string;
+  productId: string;
+  slug: string;
+  name: string;
+  size: string;
+  price: number;
+  image?: string | null;
+  qty: number;
+}

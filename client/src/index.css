@@ -1,45 +1,34 @@
 @import "tailwindcss";
 
 @theme {
-  /* Requested 4 Brand Colors */
-  --color-maroon: #5E1224;
-  --color-maroon-light: #771A31;
-  --color-maroon-dark: #460C1A;
-  --color-maroon-surface: #6D162B;
+  /* Mode Street Palette */
+  --color-espresso: #3B2F2A;
+  --color-espresso-surface: #463731;
+  --color-espresso-light: #52423B;
+  --color-espresso-dark: #2B211D;
+  --color-espresso-muted: rgba(59, 47, 42, 0.7);
 
-  --color-cream: #FBF7F0;
-  --color-cream-surface: #FFFFFF;
-  --color-cream-warm: #F5EFEB;
-  --color-cream-subtle: #F0E8DD;
+  --color-cream: #F4EFE9;
+  --color-cream-surface: #FBF8F4;
+  --color-surface-warm: #FBF8F4;
 
-  --color-gold: #B8935A;
-  --color-gold-light: #C9A975;
-  --color-gold-dark: #9A753C;
-  --color-gold-surface: #FAF4EB;
+  --color-camel: #A68A6D;
+  --color-camel-light: #B89E83;
+  --color-camel-dark: #917559;
+  --color-gold: #A68A6D;
 
-  --color-text: #2A2A2A;
-  --color-text-muted: #666666;
-  --color-text-subtle: #8A8A8A;
+  --color-sand: #D9C5B2;
+  --color-sand-light: #E7DACB;
+  --color-sand-dark: #C5B09B;
 
-  /* Harmonized structural borders and subtle dividers */
-  --color-sand: #E5DDD3;
-  --color-sand-light: #EFE9E2;
-  --color-sand-dark: #D1C5B6;
+  --color-text: #3B2F2A;
+  --color-text-muted: rgba(59, 47, 42, 0.65);
+  --color-text-subtle: rgba(59, 47, 42, 0.45);
 
-  /* Backwards compatibility aliases for existing classes */
-  --color-camel: #B8935A;
-  --color-camel-light: #C9A975;
-  --color-camel-dark: #9A753C;
-
-  --color-espresso: #2A2A2A;
-  --color-espresso-surface: #383838;
-  --color-espresso-light: #4A4A4A;
-  --color-espresso-muted: rgba(42, 42, 42, 0.7);
-
-  /* Semantic status colors (harmonized with warm maroon & gold) */
+  /* Semantic status colors */
   --color-success: #2E6B47;
   --color-success-bg: #EAF3EC;
-  --color-warning: #B8935A;
+  --color-warning: #A68A6D;
   --color-warning-bg: #FAF4EB;
   --color-danger: #8E2333;
   --color-danger-bg: #FAECF0;
@@ -56,18 +45,27 @@
 body {
   margin: 0;
   background-color: var(--color-cream);
-  color: var(--color-text);
+  color: var(--color-espresso);
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom focus ring styling using muted gold */
-.focus-ring {
-  outline: none;
-  transition: box-shadow 150ms ease, border-color 150ms ease;
-}
-.focus-ring:focus-visible {
-  outline: none;
-  border-color: var(--color-gold);
-  box-shadow: 0 0 0 2px var(--color-gold);
+/* Custom scrollbar for refined aesthetic */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
+::-webkit-scrollbar-track {
+  background: var(--color-cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-sand);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-camel);
+}

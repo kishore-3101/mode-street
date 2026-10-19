@@ -22,15 +22,15 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseStyles =
-      'inline-flex items-center justify-center font-medium rounded-lg transition-colors duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2';
+      'inline-flex items-center justify-center font-medium rounded-lg transition-colors duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel focus-visible:ring-offset-2';
 
     const variants = {
       primary:
-        'bg-maroon text-cream hover:bg-maroon-light active:bg-maroon-dark shadow-xs border border-transparent',
+        'bg-espresso text-ivory hover:bg-espresso/90 active:bg-espresso-dark shadow-xs border border-transparent',
       secondary:
-        'border border-gold text-text bg-transparent hover:bg-gold/10 active:bg-gold/20',
+        'border border-sand text-espresso bg-transparent hover:bg-sand/30 active:bg-sand/50',
       ghost:
-        'text-text bg-transparent hover:bg-sand/30 active:bg-sand/50 border border-transparent',
+        'text-espresso bg-transparent hover:bg-sand/30 active:bg-sand/50 border border-transparent',
       danger:
         'bg-danger text-white hover:opacity-90 active:opacity-100 shadow-xs border border-transparent',
     };
