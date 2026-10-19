@@ -9,6 +9,7 @@ import { AdminLayout } from './components/layout/AdminLayout.js';
 // Storefront components & pages
 import { StoreLayout } from './components/store/StoreLayout.js';
 import { HomePage } from './pages/store/HomePage.js';
+import { ProductPage } from './pages/store/ProductPage.js';
 import { ComingNextPage } from './pages/store/ComingNextPage.js';
 
 // Admin Pages
@@ -41,8 +42,9 @@ export function App() {
               <Route element={<StoreLayout />}>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/shop" element={<ComingNextPage />} />
-                <Route path="/product/:slug" element={<ComingNextPage />} />
+                <Route path="/product/:slug" element={<ProductPage />} />
                 <Route path="/cart" element={<ComingNextPage />} />
+                <Route path="/checkout" element={<ComingNextPage />} />
               </Route>
 
               {/* Admin Login */}

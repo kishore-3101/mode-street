@@ -136,7 +136,7 @@ export function Header() {
           <button
             type="button"
             onClick={() => setMobileMenuOpen(true)}
-            className="p-2.5 -ml-2 text-espresso hover:text-camel focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel rounded transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+            className="p-2.5 -ml-2 text-espresso hover:text-camel focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel rounded transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
             aria-label="Open navigation menu"
             aria-expanded={mobileMenuOpen}
           >
@@ -144,7 +144,7 @@ export function Header() {
           </button>
         </div>
 
-        {/* Logo (left on desktop, center-ish on mobile) */}
+        {/* Logo (left on desktop) */}
         <div className="flex items-center">
           <Link
             to="/"
@@ -194,7 +194,7 @@ export function Header() {
               <button
                 type="button"
                 onClick={() => setMoreOpen(!moreOpen)}
-                className="py-1 inline-flex items-center gap-1 transition-colors hover:text-camel focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel rounded"
+                className="py-1 inline-flex items-center gap-1 transition-colors hover:text-camel focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel rounded cursor-pointer"
                 aria-expanded={moreOpen}
               >
                 <span>More</span>
@@ -228,7 +228,7 @@ export function Header() {
           <button
             type="button"
             onClick={() => setSearchOpen(!searchOpen)}
-            className="p-2.5 text-espresso hover:text-camel focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel rounded transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+            className="p-2.5 text-espresso hover:text-camel focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel rounded transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
             aria-label="Search catalog"
             aria-expanded={searchOpen}
           >
@@ -274,7 +274,7 @@ export function Header() {
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="text-xs text-espresso/60 hover:text-espresso p-1 min-h-[44px] flex items-center"
+                className="text-xs text-espresso/60 hover:text-espresso p-1 min-h-[44px] flex items-center cursor-pointer"
               >
                 Clear
               </button>
@@ -282,7 +282,7 @@ export function Header() {
             <button
               type="button"
               onClick={() => setSearchOpen(false)}
-              className="p-1 text-espresso/70 hover:text-espresso focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel rounded min-h-[44px] min-w-[44px] flex items-center justify-center"
+              className="p-1 text-espresso/70 hover:text-espresso focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel rounded min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
               aria-label="Close search"
             >
               <X className="w-5 h-5" />
@@ -320,7 +320,7 @@ export function Header() {
                 <button
                   type="button"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-2 text-espresso hover:text-camel focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel rounded min-h-[44px] min-w-[44px] flex items-center justify-center"
+                  className="p-2 text-espresso hover:text-camel focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel rounded min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
                   aria-label="Close menu"
                 >
                   <X className="w-5 h-5" />
@@ -362,7 +362,7 @@ export function Header() {
               <Link
                 to="/cart"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between py-2 text-espresso hover:text-camel"
+                className="flex items-center justify-between py-2 text-espresso hover:text-camel min-h-[44px]"
               >
                 <span>Shopping Cart</span>
                 <span className="font-semibold">({count})</span>

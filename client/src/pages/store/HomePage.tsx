@@ -1,14 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getStorefrontCategories, getStorefrontProducts } from '../../api/storefront.js';
+import { Hero } from '../../components/store/Hero.js';
 import { ProductCard } from '../../components/store/ProductCard.js';
-import logoImg from '../../assets/logo.png';
-
-/**
- * Brand photography asset for the hero composition.
- * Leave as null to compose from the newest product images or display the logo fallback.
- */
-const HERO_IMAGE: string | null = null;
 
 export function HomePage() {
   // Fetch active categories
@@ -17,139 +11,38 @@ export function HomePage() {
     queryFn: getStorefrontCategories,
   });
 
-  // Fetch newest products (limit 8 for new arrivals, plus hero selection)
+  // Fetch newest products for new arrivals
   const {
     data: products = [],
     isLoading: productsLoading,
     isError: productsError,
     refetch: refetchProducts,
   } = useQuery({
-    queryKey: ['storefrontProducts', { limit: 10 }],
-    queryFn: () => getStorefrontProducts({ limit: 10 }),
+    queryKey: ['storefrontProducts', { limit: 8 }],
+    queryFn: () => getStorefrontProducts({ limit: 8 }),
   });
-
-  // Extract up to 2 products with images for hero composition
-  const productsWithImages = products.filter(
-    (p) => p.images && p.images.length > 0
-  );
-  const heroFirstProduct = productsWithImages[0];
-  const heroSecondProduct = productsWithImages[1];
-  const heroImage1 = heroFirstProduct?.images?.[0]?.url;
-  const heroImage2 = heroSecondProduct?.images?.[0]?.url;
-
-  const scrollToCategories = () => {
-    const el = document.getElementById('categories');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
 
   const newArrivals = products.slice(0, 8);
 
   return (
     <div className="space-y-16 sm:space-y-20 lg:space-y-24 pb-16 sm:pb-24">
       {/* ===================================================================== */}
-      {/* 1. HERO SECTION                                                      */}
+      {/* 1. HERO SECTION (Full-bleed photographic hero with bordered frame)     */}
       {/* ===================================================================== */}
-      <section className="min-h-[60vh] lg:min-h-[70vh] flex items-center pt-8 sm:pt-12">
-        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-            {/* Left Content */}
-            <div className="lg:col-span-6 space-y-6 sm:space-y-8">
-              <span className="text-xs uppercase tracking-widest text-camel font-medium block">
-                New season
-              </span>
-
-              <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-normal text-espresso leading-[1.08] tracking-tight">
-                Wear your story.
-              </h1>
-
-              <p className="text-sm sm:text-base text-espresso/75 leading-relaxed max-w-md font-normal">
-                Refined silhouettes and tactile textiles crafted with deliberate restraint.
-              </p>
-
-              <div className="flex flex-wrap items-center gap-5 pt-2">
-                <Link
-                  to="/shop"
-                  className="inline-flex items-center justify-center px-7 py-3.5 rounded-[10px] bg-espresso text-cream text-xs uppercase tracking-wider font-medium hover:bg-espresso/90 active:bg-espresso-dark transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel focus-visible:ring-offset-2"
-                >
-                  Shop the collection
-                </Link>
-
-                {categories.length > 0 && (
-                  <button
-                    type="button"
-                    onClick={scrollToCategories}
-                    className="inline-flex items-center text-xs uppercase tracking-wider font-medium text-espresso underline underline-offset-4 hover:text-camel transition-colors py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel rounded cursor-pointer"
-                  >
-                    Browse categories
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Right Media Area */}
-            <div className="lg:col-span-6 flex justify-center lg:justify-end">
-              {HERO_IMAGE ? (
-                <div className="w-full max-w-md aspect-4/5 rounded-[4px] overflow-hidden border border-sand bg-sand/20">
-                  <img
-                    src={HERO_IMAGE}
-                    alt="Mode Street Collection"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ) : heroImage1 && heroImage2 ? (
-                /* Composition of two newest product images offset vertically for rhythm */
-                <div className="relative w-full max-w-md grid grid-cols-2 gap-4 sm:gap-6 items-start py-6">
-                  {/* First taller card */}
-                  <Link
-                    to={`/product/${encodeURIComponent(heroFirstProduct.slug)}`}
-                    className="group block rounded-[4px] overflow-hidden border border-sand bg-cream-surface aspect-4/5 shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel"
-                    aria-label={heroFirstProduct.name}
-                  >
-                    <img
-                      src={heroImage1}
-                      alt={heroFirstProduct.name}
-                      className="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
-                    />
-                  </Link>
-
-                  {/* Second card offset vertically */}
-                  <Link
-                    to={`/product/${encodeURIComponent(heroSecondProduct.slug)}`}
-                    className="group block rounded-[4px] overflow-hidden border border-sand bg-cream-surface aspect-4/5 shadow-2xs translate-y-6 sm:translate-y-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel"
-                    aria-label={heroSecondProduct.name}
-                  >
-                    <img
-                      src={heroImage2}
-                      alt={heroSecondProduct.name}
-                      className="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
-                    />
-                  </Link>
-                </div>
-              ) : (
-                /* Sand-coloured block with logo centred */
-                <div className="w-full max-w-md aspect-4/5 rounded-[4px] border border-sand bg-sand/30 flex items-center justify-center p-8">
-                  <img
-                    src={logoImg}
-                    alt="Mode Street"
-                    className="w-44 sm:w-52 max-w-[70%] object-contain opacity-90"
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
+      <Hero />
 
       {/* ===================================================================== */}
       {/* 2. SHOP BY CATEGORY                                                  */}
       {/* ===================================================================== */}
       {categories.length > 0 && (
-        <section id="categories" className="scroll-mt-24">
+        <section id="categories" className="scroll-mt-20">
           <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
             <div>
-              <h2 className="font-serif text-3xl sm:text-4xl font-normal text-espresso tracking-tight">
+              <h2
+                id="categories-heading"
+                tabIndex={-1}
+                className="font-serif text-3xl sm:text-4xl font-normal text-espresso tracking-tight focus:outline-none"
+              >
                 Shop by category
               </h2>
             </div>
@@ -271,7 +164,7 @@ export function HomePage() {
           <div className="pt-2">
             <Link
               to="/shop"
-              className="inline-flex items-center justify-center px-7 py-3.5 rounded-[10px] border border-cream/40 text-cream text-xs uppercase tracking-wider font-medium hover:bg-cream hover:text-espresso transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel focus-visible:ring-offset-2 focus-visible:ring-offset-espresso"
+              className="inline-flex items-center justify-center px-7 py-3.5 rounded-[10px] border border-cream/40 text-cream text-xs uppercase tracking-wider font-medium hover:bg-cream hover:text-espresso transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel focus-visible:ring-offset-2 focus-visible:ring-offset-espresso cursor-pointer"
             >
               Explore the collection
             </Link>
@@ -281,3 +174,5 @@ export function HomePage() {
     </div>
   );
 }
+
+export default HomePage;

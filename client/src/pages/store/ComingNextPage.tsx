@@ -20,16 +20,16 @@ export function ComingNextPage({ title, description }: ComingNextPageProps) {
         pageDescription: 'The catalog experience is being crafted with deliberate care.',
       };
     }
-    if (path.startsWith('/product/')) {
-      return {
-        pageTitle: 'Product details',
-        pageDescription: 'Detailed garment specifications and sizing guides are arriving soon.',
-      };
-    }
     if (path.startsWith('/cart')) {
       return {
         pageTitle: 'Shopping bag',
         pageDescription: 'Bag review and checkout will be available shortly.',
+      };
+    }
+    if (path.startsWith('/checkout')) {
+      return {
+        pageTitle: 'Checkout',
+        pageDescription: 'The checkout experience is currently being prepared for private release.',
       };
     }
 
@@ -59,7 +59,7 @@ export function ComingNextPage({ title, description }: ComingNextPageProps) {
         <div className="pt-4">
           <Link
             to="/"
-            className="inline-flex items-center justify-center px-7 py-3.5 rounded-[10px] bg-espresso text-cream text-xs uppercase tracking-wider font-medium hover:bg-espresso/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel"
+            className="inline-flex items-center justify-center px-7 py-3.5 rounded-[10px] bg-espresso text-cream text-xs uppercase tracking-wider font-medium hover:bg-espresso/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel cursor-pointer"
           >
             Return to home
           </Link>
