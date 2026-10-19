@@ -51,7 +51,9 @@ router.post('/', validate({ body: createOrderSchema }), async (req, res, next) =
 // GET /api/orders - Admin: list orders (newest first)
 router.get('/', requireAdmin, validate({ query: adminOrderQuerySchema }), async (req, res, next) => {
     try {
-        const { status, page = 1, limit = 20 } = req.query;
+        const status = typeof req.query.status === 'string' ? req.query.status : undefined;
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 20;
         let query = supabase
             .from('orders')
             .select('*', { count: 'exact' });

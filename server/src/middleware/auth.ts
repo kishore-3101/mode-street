@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { env } from '../config/env.js';
-export function requireAdmin(req, res, next) {
+export function requireAdmin(req: any, res: any, next: any) {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         res.status(401).json({ error: 'Unauthorized: No token provided' });
@@ -12,8 +12,8 @@ export function requireAdmin(req, res, next) {
         return;
     }
     try {
-        const decoded = jwt.verify(token, env.JWT_SECRET);
-        if (!decoded.id || !decoded.email) {
+        const decoded = jwt.verify(token, env.JWT_SECRET) as any;
+        if (!decoded || !decoded.id || !decoded.email) {
             res.status(401).json({ error: 'Unauthorized: Invalid token payload' });
             return;
         }

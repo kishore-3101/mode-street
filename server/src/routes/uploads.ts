@@ -8,12 +8,12 @@ const router = Router();
 // POST /api/uploads - Admin: upload up to 5 images
 router.post('/', requireAdmin, uploadImages.array('images', 5), async (req, res, next) => {
     try {
-        const files = req.files;
-        if (!files || files.length === 0) {
+        const files = (req.files ?? []) as any[];
+        if (!Array.isArray(files) || files.length === 0) {
             res.status(400).json({ error: 'No image files provided' });
             return;
         }
-        const uploadPromises = files.map((file) => processAndUploadImage(file.buffer, file.originalname));
+        const uploadPromises = files.map((file: any) => processAndUploadImage(file.buffer, file.originalname));
         const uploaded = await Promise.all(uploadPromises);
         res.status(201).json(uploaded);
     }
