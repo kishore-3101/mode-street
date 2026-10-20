@@ -62,6 +62,7 @@ router.post('/', orderRateLimiter, validate({ body: createOrderSchema }), async 
 router.get('/', requireAdmin, validate({ query: adminOrderQuerySchema }), async (req, res, next) => {
     try {
         const status = typeof req.query.status === 'string' ? req.query.status : undefined;
+        const search = typeof req.query.search === 'string' ? req.query.search.trim() : undefined;
         const page = Number(req.query.page) || 1;
         const limit = Number(req.query.limit) || 20;
         let query = supabase
@@ -69,6 +70,16 @@ router.get('/', requireAdmin, validate({ query: adminOrderQuerySchema }), async 
             .select('*', { count: 'exact' });
         if (status) {
             query = query.eq('status', status);
+        }
+        if (search) {
+            // Escape %, _ and , so user input cannot alter or break the filter
+            const escaped = search.replace(/[%_,]/g, '\\$&');
+            const isPureDigits = /^\d+$/.test(search);
+            if (isPureDigits) {
+                query = query.or(`order_number.eq.${escaped},customer_name.ilike.%${escaped}%,phone.ilike.%${escaped}%`);
+            } else {
+                query = query.or(`customer_name.ilike.%${escaped}%,phone.ilike.%${escaped}%`);
+            }
         }
         const from = (page - 1) * limit;
         const to = from + limit - 1;
@@ -116,6 +127,44 @@ router.patch('/:id/status', requireAdmin, validate({ params: orderIdParamSchema,
     try {
         const id = req.params.id;
         const { status } = req.body;
+
+        // Read current order status before performing transition
+        const { data: currentOrder, error: fetchCurrentError } = await supabase
+            .from('orders')
+            .select('status')
+            .eq('id', id)
+            .maybeSingle();
+
+        if (fetchCurrentError) {
+            console.error('Error fetching current order status:', fetchCurrentError.message);
+            res.status(500).json({ error: 'Failed to verify current order status' });
+            return;
+        }
+
+        if (!currentOrder) {
+            res.status(404).json({ error: 'Order not found' });
+            return;
+        }
+
+        const currentStatus = currentOrder.status;
+
+        // Status transition guard: allow only specified transitions
+        const ALLOWED_TRANSITIONS: Record<string, string[]> = {
+            pending: ['confirmed', 'cancelled'],
+            confirmed: ['shipped', 'cancelled'],
+            shipped: ['delivered', 'cancelled'],
+            delivered: [],
+            cancelled: [],
+        };
+
+        const allowed = ALLOWED_TRANSITIONS[currentStatus] || [];
+        if (!allowed.includes(status)) {
+            res.status(409).json({
+                error: `Cannot transition order status from '${currentStatus}' to '${status}'.`,
+            });
+            return;
+        }
+
         const { error } = await supabase.rpc('set_order_status', {
             p_order_id: id,
             p_status: status,

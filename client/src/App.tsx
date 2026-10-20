@@ -21,7 +21,8 @@ import { ProductsListPage } from './pages/products/ProductsListPage.js';
 import { ProductFormPage } from './pages/products/ProductFormPage.js';
 import { CategoriesPage } from './pages/categories/CategoriesPage.js';
 import { InventoryPage } from './pages/inventory/InventoryPage.js';
-import { OrdersPlaceholderPage } from './pages/orders/OrdersPlaceholderPage.js';
+import { OrdersListPage } from './pages/orders/OrdersListPage.js';
+import { OrderDetailPage } from './pages/orders/OrderDetailPage.js';
 import { NotFoundPage } from './pages/NotFoundPage.js';
 
 const queryClient = new QueryClient({
@@ -63,7 +64,8 @@ export function App() {
                   <Route path="products/:id/edit" element={<ProductFormPage />} />
                   <Route path="categories" element={<CategoriesPage />} />
                   <Route path="inventory" element={<InventoryPage />} />
-                  <Route path="orders" element={<OrdersPlaceholderPage />} />
+                  <Route path="orders" element={<OrdersListPage />} />
+                  <Route path="orders/:id" element={<OrderDetailPage />} />
                 </Route>
               </Route>
 

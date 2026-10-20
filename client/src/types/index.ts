@@ -221,3 +221,49 @@ export const INDIAN_STATES = [
 ] as const;
 
 export type IndianState = typeof INDIAN_STATES[number];
+
+export type OrderStatus = 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
+
+export interface Order {
+  id: string;
+  order_number: string;
+  customer_name: string;
+  phone: string;
+  email: string | null;
+  address: string;
+  city: string;
+  state: string;
+  pincode: string;
+  notes: string | null;
+  total: number;
+  status: OrderStatus;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface OrderItem {
+  id: string;
+  order_id: string;
+  product_id: string;
+  variant_id: string;
+  product_name: string;
+  size: string;
+  quantity: number;
+  unit_price: number;
+}
+
+export interface OrderWithItems extends Order {
+  order_items: OrderItem[];
+}
+
+export interface AdminOrdersParams {
+  status?: OrderStatus;
+  search?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface AdminOrdersResponse {
+  orders: Order[];
+  total: number;
+}

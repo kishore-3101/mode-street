@@ -8,7 +8,19 @@ interface SidebarProps {
   className?: string;
 }
 
-const navGroups = [
+interface NavItem {
+  to: string;
+  label: string;
+  icon: typeof Shirt;
+  badge?: string;
+}
+
+interface NavGroup {
+  label: string;
+  items: NavItem[];
+}
+
+const navGroups: NavGroup[] = [
   {
     label: 'Catalogue',
     items: [
@@ -19,7 +31,7 @@ const navGroups = [
   },
   {
     label: 'Sales',
-    items: [{ to: '/admin/orders', label: 'Orders', icon: ShoppingCart, badge: 'Soon' }],
+    items: [{ to: '/admin/orders', label: 'Orders', icon: ShoppingCart }],
   },
 ];
 
