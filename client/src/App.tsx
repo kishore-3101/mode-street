@@ -11,7 +11,9 @@ import { StoreLayout } from './components/store/StoreLayout.js';
 import { HomePage } from './pages/store/HomePage.js';
 import { ShopPage } from './pages/store/ShopPage.js';
 import { ProductPage } from './pages/store/ProductPage.js';
-import { ComingNextPage } from './pages/store/ComingNextPage.js';
+import { CartPage } from './pages/store/CartPage.js';
+import { CheckoutPage } from './pages/store/CheckoutPage.js';
+import { OrderConfirmationPage } from './pages/store/OrderConfirmationPage.js';
 
 // Admin Pages
 import { LoginPage } from './pages/auth/LoginPage.js';
@@ -44,8 +46,9 @@ export function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/shop" element={<ShopPage />} />
                 <Route path="/product/:slug" element={<ProductPage />} />
-                <Route path="/cart" element={<ComingNextPage />} />
-                <Route path="/checkout" element={<ComingNextPage />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route path="/checkout" element={<CheckoutPage />} />
+                <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
               </Route>
 
               {/* Admin Login */}

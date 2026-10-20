@@ -126,3 +126,98 @@ export interface CartItem {
   qty: number;
   maxQty: number;
 }
+
+export interface CreateOrderCustomerInput {
+  name: string;
+  phone: string;
+  email?: string | null;
+  address: string;
+  city: string;
+  state: string;
+  pincode: string;
+  notes?: string | null;
+}
+
+export interface CreateOrderItemInput {
+  variant_id: string;
+  quantity: number;
+}
+
+export interface CreateOrderInput {
+  customer: CreateOrderCustomerInput;
+  items: CreateOrderItemInput[];
+}
+
+export interface CreateOrderResponse {
+  order_id: string;
+  order_number: string;
+  total: number;
+}
+
+export interface OrderConfirmationSnapshot {
+  order_id: string;
+  order_number: string;
+  total: number;
+  customer: {
+    name: string;
+    phone: string;
+    email?: string | null;
+    address: string;
+    city: string;
+    state: string;
+    pincode: string;
+    notes?: string | null;
+  };
+  items: {
+    variantId: string;
+    productId: string;
+    slug: string;
+    name: string;
+    size: string;
+    qty: number;
+    price: number;
+    image?: string | null;
+  }[];
+  placed_at: string;
+}
+
+export const INDIAN_STATES = [
+  'Andaman and Nicobar Islands',
+  'Andhra Pradesh',
+  'Arunachal Pradesh',
+  'Assam',
+  'Bihar',
+  'Chandigarh',
+  'Chhattisgarh',
+  'Dadra and Nagar Haveli and Daman and Diu',
+  'Delhi',
+  'Goa',
+  'Gujarat',
+  'Haryana',
+  'Himachal Pradesh',
+  'Jammu and Kashmir',
+  'Jharkhand',
+  'Karnataka',
+  'Kerala',
+  'Ladakh',
+  'Lakshadweep',
+  'Madhya Pradesh',
+  'Maharashtra',
+  'Manipur',
+  'Meghalaya',
+  'Mizoram',
+  'Nagaland',
+  'Odisha',
+  'Puducherry',
+  'Punjab',
+  'Rajasthan',
+  'Sikkim',
+  'Tamil Nadu',
+  'Telangana',
+  'Tripura',
+  'Uttar Pradesh',
+  'Uttarakhand',
+  'West Bengal',
+] as const;
+
+export type IndianState = typeof INDIAN_STATES[number];

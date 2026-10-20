@@ -8,6 +8,10 @@ export interface CartContextValue {
     item: Omit<CartItem, 'qty' | 'maxQty'> & { qty?: number; maxQty?: number }
   ) => boolean;
   updateQty: (variantId: string, qty: number) => void;
+  updateLineMeta?: (
+    variantId: string,
+    updates: { price?: number; maxQty?: number; qty?: number }
+  ) => void;
   removeItem: (variantId: string) => void;
   clear: () => void;
   buyNowItem: CartItem | null;

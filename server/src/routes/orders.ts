@@ -1,11 +1,21 @@
 import { Router } from 'express';
+import { rateLimit } from 'express-rate-limit';
 import { supabase } from '../lib/supabase.js';
 import { requireAdmin } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import { createOrderSchema, adminOrderQuerySchema, updateOrderStatusSchema, orderIdParamSchema, } from '../schemas/orders.js';
+
+const orderRateLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 20, // 20 requests per hour per IP
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Too many requests. Please try again later.' },
+});
+
 const router = Router();
 // POST /api/orders - Public: Place a new order
-router.post('/', validate({ body: createOrderSchema }), async (req, res, next) => {
+router.post('/', orderRateLimiter, validate({ body: createOrderSchema }), async (req, res, next) => {
     try {
         const { customer, items } = req.body;
         const { data, error } = await supabase.rpc('place_order', {

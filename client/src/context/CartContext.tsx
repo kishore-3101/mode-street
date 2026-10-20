@@ -112,6 +112,26 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
   };
 
+  const updateLineMeta = (
+    variantId: string,
+    updates: { price?: number; maxQty?: number; qty?: number }
+  ) => {
+    setItems((prev) =>
+      prev.map((item) => {
+        if (item.variantId !== variantId) return item;
+        const newMaxQty = typeof updates.maxQty === 'number' ? updates.maxQty : item.maxQty;
+        const targetQty = typeof updates.qty === 'number' ? updates.qty : item.qty;
+        const newQty = Math.max(1, Math.min(newMaxQty > 0 ? newMaxQty : 1, targetQty));
+        return {
+          ...item,
+          price: typeof updates.price === 'number' ? updates.price : item.price,
+          maxQty: newMaxQty,
+          qty: newQty,
+        };
+      })
+    );
+  };
+
   const removeItem = (variantId: string) => {
     setItems((prev) => prev.filter((item) => item.variantId !== variantId));
   };
@@ -129,6 +149,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         count,
         addItem,
         updateQty,
+        updateLineMeta,
         removeItem,
         clear,
         buyNowItem,

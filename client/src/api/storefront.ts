@@ -4,6 +4,8 @@ import type {
   Product,
   StorefrontProductsParams,
   StorefrontProductsResponse,
+  CreateOrderInput,
+  CreateOrderResponse,
 } from '../types/index.js';
 
 /**
@@ -53,5 +55,15 @@ export async function getStorefrontProductsWithCount(
  */
 export async function getStorefrontProductBySlug(slug: string): Promise<Product> {
   const response = await apiClient.get<Product>(`/products/${slug}`);
+  return response.data;
+}
+
+/**
+ * Place a new public customer order.
+ */
+export async function createStorefrontOrder(
+  data: CreateOrderInput
+): Promise<CreateOrderResponse> {
+  const response = await apiClient.post<CreateOrderResponse>('/orders', data);
   return response.data;
 }
