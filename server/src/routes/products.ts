@@ -56,6 +56,7 @@ productsRouter.get('/', validate({ query: productQuerySchema }), async (req, res
         const search = typeof req.query.search === 'string' ? req.query.search : undefined;
         const page = Number(req.query.page) || 1;
         const limit = Number(req.query.limit) || 20;
+        const sort = req.query.sort === 'price_asc' || req.query.sort === 'price_desc' ? req.query.sort : 'newest';
         let categoryId = null;
         if (category) {
             const { data: cat, error: catError } = await supabase
@@ -88,8 +89,16 @@ productsRouter.get('/', validate({ query: productQuerySchema }), async (req, res
         }
         const from = (page - 1) * limit;
         const to = from + limit - 1;
+
+        if (sort === 'price_asc') {
+            query = query.order('price', { ascending: true }).order('id', { ascending: true });
+        } else if (sort === 'price_desc') {
+            query = query.order('price', { ascending: false }).order('id', { ascending: true });
+        } else {
+            query = query.order('created_at', { ascending: false });
+        }
+
         const { data: products, error, count } = await query
-            .order('created_at', { ascending: false })
             .range(from, to);
         if (error) {
             console.error('Error fetching products:', error.message);

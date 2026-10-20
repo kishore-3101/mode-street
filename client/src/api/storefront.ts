@@ -3,6 +3,7 @@ import type {
   Category,
   Product,
   StorefrontProductsParams,
+  StorefrontProductsResponse,
 } from '../types/index.js';
 
 /**
@@ -30,6 +31,21 @@ export async function getStorefrontProducts(
 ): Promise<Product[]> {
   const response = await apiClient.get<Product[]>('/products', { params });
   return response.data;
+}
+
+/**
+ * Fetch public active products along with the total count from the X-Total-Count header.
+ */
+export async function getStorefrontProductsWithCount(
+  params?: StorefrontProductsParams
+): Promise<StorefrontProductsResponse> {
+  const response = await apiClient.get<Product[]>('/products', { params });
+  const rawTotal = response.headers['x-total-count'];
+  const total = rawTotal !== undefined ? parseInt(String(rawTotal), 10) : response.data.length;
+  return {
+    products: response.data,
+    total: isNaN(total) ? response.data.length : total,
+  };
 }
 
 /**

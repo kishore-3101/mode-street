@@ -100,11 +100,19 @@ export interface ApiError {
   error: string;
 }
 
+export type ProductSortOption = 'newest' | 'price_asc' | 'price_desc';
+
 export interface StorefrontProductsParams {
   limit?: number;
   page?: number;
   category?: string;
   search?: string;
+  sort?: ProductSortOption;
+}
+
+export interface StorefrontProductsResponse {
+  products: Product[];
+  total: number;
 }
 
 export interface CartItem {

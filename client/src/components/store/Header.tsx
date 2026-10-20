@@ -4,7 +4,7 @@ import { Search, ShoppingBag, Menu, X, ChevronDown } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { getStorefrontCategories } from '../../api/storefront.js';
 import { useCart } from '../../hooks/useCart.js';
-import logoImg from '../../assets/logo.png';
+import logoImg from '../../assets/navbar-logo.png';
 
 export function Header() {
   const location = useLocation();
@@ -122,7 +122,9 @@ export function Header() {
     return location.pathname === '/shop' && params.get('category') === slug;
   };
 
-  const isShopActive = location.pathname === '/shop' && !location.search;
+  const isShopActive =
+    location.pathname === '/shop' &&
+    !new URLSearchParams(location.search).get('category');
 
   return (
     <header
@@ -154,7 +156,7 @@ export function Header() {
             <img
               src={logoImg}
               alt="Mode Street"
-              className="w-36 sm:w-44 h-auto object-contain max-h-12"
+              className="h-8 sm:h-9 lg:h-10 w-auto object-contain"
             />
           </Link>
         </div>
@@ -315,7 +317,7 @@ export function Header() {
                 <img
                   src={logoImg}
                   alt="Mode Street"
-                  className="w-28 h-auto object-contain"
+                  className="h-8 w-auto object-contain"
                 />
                 <button
                   type="button"
