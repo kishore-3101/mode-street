@@ -267,3 +267,35 @@ export interface AdminOrdersResponse {
   orders: Order[];
   total: number;
 }
+
+export interface HeroSlide {
+  id: string;
+  image_url: string;
+  imageUrl?: string;
+  storage_path?: string | null;
+  alt_text?: string | null;
+  link_url?: string | null;
+  sort_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateHeroSlideInput {
+  image_url?: string;
+  storage_path?: string | null;
+  alt_text?: string | null;
+  link_url?: string | null;
+  sort_order?: number;
+  is_active?: boolean;
+}
+
+export interface UpdateHeroSlideInput {
+  image_url?: string;
+  storage_path?: string | null;
+  alt_text?: string | null;
+  link_url?: string | null;
+  sort_order?: number;
+  is_active?: boolean;
+}
+

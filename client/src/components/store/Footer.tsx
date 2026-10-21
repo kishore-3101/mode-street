@@ -13,20 +13,25 @@ const CONTACT = {
   mapUrl: 'https://maps.google.com/?q=Nungambakkam+High+Road+Chennai',
   phone: '+91 98765 43210',
   phoneHref: 'tel:+919876543210',
-  email: 'hello@modestreet.com',
+  email: 'contact@modestreet.com',
   hours: 'Mon – Sat, 10:00 AM – 8:00 PM',
 };
 
 const SOCIALS = [
   {
     name: 'Instagram',
-    href: 'https://instagram.com/modestreet',
+    href: 'https://instagram.com',
     path: 'M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Zm0 2a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Zm5.25-3.25a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Z',
   },
   {
     name: 'Facebook',
-    href: 'https://facebook.com/modestreet',
+    href: 'https://facebook.com',
     path: 'M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.5 1.6-1.5h1.7V4.4c-.3 0-1.3-.1-2.4-.1-2.4 0-4.1 1.5-4.1 4.2v2.3H7.5V14h2.8v8h3.2Z',
+  },
+  {
+    name: 'X',
+    href: 'https://x.com',
+    path: 'M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z',
   },
 ];
 
@@ -39,8 +44,6 @@ const HELP_LINKS = [
 ];
 
 const COMPANY_LINKS = [
-  { label: 'Our Story', to: '/about' },
-  { label: 'Privacy Policy', to: '/privacy' },
   { label: 'Terms of Service', to: '/terms' },
 ];
 

@@ -7,6 +7,7 @@ import categoriesRouter from './routes/categories.js';
 import productsRouter, { adminProductsRouter } from './routes/products.js';
 import uploadsRouter from './routes/uploads.js';
 import ordersRouter from './routes/orders.js';
+import heroSlidesRouter, { adminHeroSlidesRouter } from './routes/heroSlides.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 const app = express();
 app.set('trust proxy', 1);
@@ -56,6 +57,8 @@ app.use(['/api/admin/products', '/admin/products'], adminProductsRouter);
 app.use(['/api/products', '/products'], productsRouter);
 app.use(['/api/uploads', '/uploads'], uploadsRouter);
 app.use(['/api/orders', '/orders'], ordersRouter);
+app.use(['/api/hero-slides', '/hero-slides'], heroSlidesRouter);
+app.use(['/api/admin/hero-slides', '/admin/hero-slides'], adminHeroSlidesRouter);
 
 // 404 handler
 app.use(notFoundHandler);

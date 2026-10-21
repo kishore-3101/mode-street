@@ -2,11 +2,20 @@ import { apiClient } from './client.js';
 import type {
   Category,
   Product,
+  HeroSlide,
   StorefrontProductsParams,
   StorefrontProductsResponse,
   CreateOrderInput,
   CreateOrderResponse,
 } from '../types/index.js';
+
+/**
+ * Fetch active hero slides for the storefront slideshow.
+ */
+export async function getStorefrontHeroSlides(): Promise<HeroSlide[]> {
+  const response = await apiClient.get<HeroSlide[]>('/hero-slides');
+  return response.data;
+}
 
 /**
  * Fetch all categories for the storefront navigation and category grid.

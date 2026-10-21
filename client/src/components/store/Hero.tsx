@@ -1,92 +1,234 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { getStorefrontHeroSlides } from '../../api/storefront.js';
+import { useHeroSlideshow } from '../../hooks/useHeroSlideshow.js';
+import type { HeroSlide } from '../../types/index.js';
+import { cn } from '../../lib/utils.js';
+
+// Fallback slide if database is empty, loading, or network fails
+const FALLBACK_SLIDE: HeroSlide = {
+  id: 'fallback-static-hero',
+  image_url: '/hero.jpg',
+  alt_text: 'Mode Street Editorial Collection',
+  link_url: '/shop',
+  sort_order: 0,
+  is_active: true,
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+};
 
 /**
- * Editorial supporting description text for the hero.
- * Kept in a top-level constant for easy editing/client approval.
+ * Normalizes and resolves slide image URLs:
+ * - Supabase or external absolute URLs (http://, https://, data:) are preserved.
+ * - Uploads paths (/uploads/...) resolve through Vite's dev proxy or backend origin.
+ * - Local static paths (/hero.jpg) are preserved.
  */
-export const HERO_DESCRIPTION =
-  'Refined silhouettes and tactile textiles crafted with deliberate restraint.';
+function resolveSlideImageUrl(url?: string | null): string {
+  if (!url) return '/hero.jpg';
+  const trimmed = url.trim();
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('data:')) {
+    return trimmed;
+  }
+  // Normalize uploads path
+  if (trimmed.startsWith('/uploads/') || trimmed.startsWith('uploads/')) {
+    const clean = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+    const apiUrl = import.meta.env.VITE_API_URL;
+    if (apiUrl) {
+      const origin = apiUrl.replace(/\/api\/?$/, '');
+      return `${origin}${clean}`;
+    }
+    return clean;
+  }
+  return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+}
+
+interface SlideItemProps {
+  slide: HeroSlide;
+  isActive: boolean;
+  isFirst: boolean;
+  isNext: boolean;
+  prefersReducedMotion: boolean;
+}
+
+function SlideItem({
+  slide,
+  isActive,
+  isFirst,
+  isNext,
+  prefersReducedMotion,
+}: SlideItemProps) {
+  // Support both snake_case and camelCase field names from API/uploads
+  const rawUrl = slide.image_url ?? (slide as any).imageUrl ?? (slide as any).url ?? '';
+  const resolvedUrl = resolveSlideImageUrl(rawUrl);
+  const [hasError, setHasError] = useState(false);
+
+  // If slide URL changes, reset error state during render
+  const [prevUrl, setPrevUrl] = useState(rawUrl);
+  if (prevUrl !== rawUrl) {
+    setPrevUrl(rawUrl);
+    setHasError(false);
+  }
+
+  const imgSrc = hasError ? '/hero.jpg' : resolvedUrl;
+
+  // Graceful fallback to static hero on any image loading error
+  const handleImageError = () => {
+    if (!hasError && resolvedUrl !== '/hero.jpg') {
+      setHasError(true);
+    }
+  };
+
+  const isEager = isFirst || isNext || isActive;
+  const isExternal = slide.link_url?.startsWith('http://') || slide.link_url?.startsWith('https://');
+
+  const content = (
+    <div className="relative h-full w-full overflow-hidden bg-espresso">
+      <img
+        src={imgSrc}
+        alt={slide.alt_text ?? ''}
+        loading={isEager ? 'eager' : 'lazy'}
+        fetchPriority={isFirst ? 'high' : undefined}
+        decoding="async"
+        onError={handleImageError}
+        className="h-full w-full select-none object-cover object-center"
+      />
+    </div>
+  );
+
+  return (
+    <div
+      className={cn(
+        'absolute inset-0 h-full w-full',
+        prefersReducedMotion
+          ? 'transition-none'
+          : 'transition-opacity duration-700 ease-in-out',
+        isActive
+          ? 'opacity-100 z-10 pointer-events-auto'
+          : 'opacity-0 z-0 pointer-events-none'
+      )}
+      aria-hidden={!isActive}
+    >
+      {slide.link_url ? (
+        isExternal ? (
+          <a
+            href={slide.link_url}
+            className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel focus-visible:ring-inset"
+            tabIndex={isActive ? 0 : -1}
+          >
+            {content}
+          </a>
+        ) : (
+          <Link
+            to={slide.link_url}
+            className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel focus-visible:ring-inset"
+            tabIndex={isActive ? 0 : -1}
+          >
+            {content}
+          </Link>
+        )
+      ) : (
+        content
+      )}
+    </div>
+  );
+}
 
 export function Hero() {
-  const handleBrowseCategories = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    const target = document.getElementById('categories');
-    if (!target) return;
+  const { data: dbSlides = [], isError } = useQuery({
+    queryKey: ['storefrontHeroSlides'],
+    queryFn: getStorefrontHeroSlides,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
 
-    const prefersReducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)'
-    ).matches;
+  // Gracefully fallback to static hero if empty or on query error
+  const slides = !isError && dbSlides.length > 0 ? dbSlides : [FALLBACK_SLIDE];
+  const totalSlides = slides.length;
+  const hasMultipleSlides = totalSlides > 1;
 
-    target.scrollIntoView({
-      behavior: prefersReducedMotion ? 'instant' : 'smooth',
-      block: 'start',
-    });
+  const {
+    currentIndex,
+    goToSlide,
+    nextSlide,
+    prevSlide,
+    setIsHovered,
+    setIsFocused,
+    prefersReducedMotion,
+  } = useHeroSlideshow({ totalSlides, intervalMs: 3000 });
 
-    const heading = document.getElementById('categories-heading');
-    heading?.focus({ preventScroll: true });
-  };
+  const nextIndex = (currentIndex + 1) % totalSlides;
 
   return (
     <section
-      className="relative flex min-h-[560px] w-full items-center overflow-hidden bg-espresso max-h-[820px] sm:min-h-[640px] lg:min-h-[calc(80svh-5rem)]"
-      aria-label="New season collection introduction"
+      aria-label="Editorial collection showcase"
+      className="group relative w-full overflow-hidden bg-espresso h-[460px] sm:h-[600px] lg:h-[calc(80svh-5rem)] min-h-[420px] max-h-[820px]"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onFocusCapture={() => setIsFocused(true)}
+      onBlurCapture={() => setIsFocused(false)}
     >
-      {/* Layer 1: photograph */}
-      <picture className="absolute inset-0 block h-full w-full">
-        <source srcSet="/hero-1920.webp" media="(min-width: 768px)" type="image/webp" />
-        <source srcSet="/hero-960.webp" media="(max-width: 767px)" type="image/webp" />
-        <img
-          src="/hero.jpg"
-          alt=""
-          fetchPriority="high"
-          decoding="async"
-          width={1920}
-          height={1080}
-          className="pointer-events-none h-full w-full select-none object-cover object-[25%_center] md:object-[35%_center] lg:object-[center_left]"
+      {/* Slides Stack - Direct absolute positioning to guarantee full height */}
+      {slides.map((slide, index) => (
+        <SlideItem
+          key={slide.id || index}
+          slide={slide}
+          isActive={currentIndex === index}
+          isFirst={index === 0}
+          isNext={nextIndex === index}
+          prefersReducedMotion={prefersReducedMotion}
         />
-      </picture>
+      ))}
 
-      {/* Layer 2: flat dark overlay (no gradient) */}
-      <div className="pointer-events-none absolute inset-0 bg-espresso/55" aria-hidden="true" />
+      {/* Multi-slide controls (dots and arrows) */}
+      {hasMultipleSlides && (
+        <>
+          {/* Previous Slide Arrow */}
+          <button
+            type="button"
+            onClick={prevSlide}
+            aria-label="Previous slide"
+            className="hidden sm:inline-flex absolute left-4 lg:left-6 top-1/2 -translate-y-1/2 z-20 h-10 w-10 items-center justify-center rounded-full bg-espresso/40 text-cream backdrop-blur-xs border border-sand/30 hover:bg-espresso/70 transition-all opacity-80 hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel cursor-pointer"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
 
-      {/* Layer 3: content */}
-      <div className="relative z-10 mx-auto w-full max-w-[1280px] px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-        <fieldset
-          role="presentation"
-          className="m-0 w-full min-w-0 max-w-[560px] rounded-none border border-cream/50 bg-espresso/15 p-6 sm:p-8 lg:p-10"
-        >
-          <legend className="ml-2 select-none px-3 text-[11px] font-medium uppercase tracking-[0.2em] text-cream/80 sm:ml-4">
-            NEW SEASON
-          </legend>
+          {/* Next Slide Arrow */}
+          <button
+            type="button"
+            onClick={nextSlide}
+            aria-label="Next slide"
+            className="hidden sm:inline-flex absolute right-4 lg:right-6 top-1/2 -translate-y-1/2 z-20 h-10 w-10 items-center justify-center rounded-full bg-espresso/40 text-cream backdrop-blur-xs border border-sand/30 hover:bg-espresso/70 transition-all opacity-80 hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel cursor-pointer"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
 
-          <div className="space-y-5">
-            <h1 className="font-serif text-[clamp(2.5rem,5vw,4.25rem)] font-semibold leading-[1.05] tracking-tight text-cream">
-              Wear Your Story
-            </h1>
-
-            <p className="max-w-[44ch] text-[15px] font-normal leading-[1.6] text-cream/90 sm:text-[16px]">
-              {HERO_DESCRIPTION}
-            </p>
-
-            <div className="flex flex-col items-stretch gap-3 pt-2 sm:flex-row sm:items-center sm:gap-4">
-              <Link
-                to="/shop"
-                className="inline-flex min-h-[44px] items-center justify-center rounded-[10px] bg-sand px-[22px] py-3 text-xs font-semibold uppercase tracking-[0.08em] text-espresso transition-colors duration-150 hover:bg-sand/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel focus-visible:ring-offset-2 focus-visible:ring-offset-espresso sm:text-sm"
-              >
-                Shop the collection
-              </Link>
-
-              <a
-                href="#categories"
-                onClick={handleBrowseCategories}
-                className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-[10px] border border-cream/60 bg-transparent px-[22px] py-3 text-xs font-semibold uppercase tracking-[0.08em] text-cream transition-colors duration-150 hover:bg-cream/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel focus-visible:ring-offset-2 focus-visible:ring-offset-espresso sm:text-sm"
-              >
-                Browse categories
-              </a>
-            </div>
-          </div>
-        </fieldset>
-      </div>
+          {/* Pagination Dots */}
+          <nav
+            aria-label="Hero slides pagination"
+            className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-espresso/40 backdrop-blur-xs border border-sand/25"
+          >
+            {slides.map((_, idx) => {
+              const isSelected = currentIndex === idx;
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => goToSlide(idx)}
+                  aria-label={`Go to slide ${idx + 1} of ${totalSlides}`}
+                  aria-current={isSelected ? 'true' : undefined}
+                  className={cn(
+                    'h-2 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel cursor-pointer',
+                    isSelected
+                      ? 'w-6 bg-cream'
+                      : 'w-2 bg-cream/40 hover:bg-cream/70'
+                  )}
+                />
+              );
+            })}
+          </nav>
+        </>
+      )}
     </section>
   );
 }

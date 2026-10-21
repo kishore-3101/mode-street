@@ -30,6 +30,7 @@ import { CategoriesPage } from './pages/categories/CategoriesPage.js';
 import { InventoryPage } from './pages/inventory/InventoryPage.js';
 import { OrdersListPage } from './pages/orders/OrdersListPage.js';
 import { OrderDetailPage } from './pages/orders/OrderDetailPage.js';
+import { HeroSlidesPage } from './pages/hero/HeroSlidesPage.js';
 import { NotFoundPage } from './pages/NotFoundPage.js';
 
 const queryClient = new QueryClient({
@@ -89,6 +90,7 @@ export function App() {
                   <Route path="inventory" element={<InventoryPage />} />
                   <Route path="orders" element={<OrdersListPage />} />
                   <Route path="orders/:id" element={<OrderDetailPage />} />
+                  <Route path="hero" element={<HeroSlidesPage />} />
                 </Route>
               </Route>
 

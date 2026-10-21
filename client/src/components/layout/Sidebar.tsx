@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Shirt, Layers, Boxes, ShoppingCart, LogOut, ArrowUpRight } from 'lucide-react';
+import { Shirt, Layers, Boxes, ShoppingCart, Sliders, LogOut, ArrowUpRight } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth.js';
 import { cn } from '../../lib/utils.js';
 
@@ -32,6 +32,10 @@ const navGroups: NavGroup[] = [
   {
     label: 'Sales',
     items: [{ to: '/admin/orders', label: 'Orders', icon: ShoppingCart }],
+  },
+  {
+    label: 'Storefront',
+    items: [{ to: '/admin/hero', label: 'Hero Slideshow', icon: Sliders }],
   },
 ];
 
