@@ -162,7 +162,7 @@ export function Hero() {
   return (
     <section
       aria-label="Editorial collection showcase"
-      className="group relative w-full overflow-hidden bg-espresso h-[460px] sm:h-[600px] lg:h-[calc(80svh-5rem)] min-h-[420px] max-h-[820px]"
+      className="group relative w-full overflow-hidden bg-espresso h-[60svh] min-h-[420px] sm:h-[70svh] lg:h-[calc(100svh-5.5rem)] lg:max-h-[1000px]"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onFocusCapture={() => setIsFocused(true)}
