@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { AuthProvider } from './context/AuthContext.js';
@@ -14,6 +15,12 @@ import { ProductPage } from './pages/store/ProductPage.js';
 import { CartPage } from './pages/store/CartPage.js';
 import { CheckoutPage } from './pages/store/CheckoutPage.js';
 import { OrderConfirmationPage } from './pages/store/OrderConfirmationPage.js';
+import { TermsPage } from './pages/store/TermsPage.js';
+import { ContactPage } from './pages/store/ContactPage.js';
+import { ShippingPage } from './pages/store/ShippingPage.js';
+import { ReturnsPage } from './pages/store/ReturnsPage.js';
+import { SizeGuidePage } from './pages/store/SizeGuidePage.js';
+import { FaqPage } from './pages/store/FaqPage.js';
 
 // Admin Pages
 import { LoginPage } from './pages/auth/LoginPage.js';
@@ -35,12 +42,21 @@ const queryClient = new QueryClient({
   },
 });
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [pathname]);
+  return null;
+}
+
 export function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <CartProvider>
           <BrowserRouter>
+            <ScrollToTop />
             <Routes>
               {/* Public Storefront Routes wrapped in StoreLayout */}
               <Route element={<StoreLayout />}>
@@ -50,6 +66,13 @@ export function App() {
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
                 <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
+                {/* Static Content Pages */}
+                <Route path="/terms" element={<TermsPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/shipping" element={<ShippingPage />} />
+                <Route path="/returns" element={<ReturnsPage />} />
+                <Route path="/size-guide" element={<SizeGuidePage />} />
+                <Route path="/faq" element={<FaqPage />} />
               </Route>
 
               {/* Admin Login */}
