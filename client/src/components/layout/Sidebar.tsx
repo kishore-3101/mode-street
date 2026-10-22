@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Shirt, Layers, Boxes, ShoppingCart, Sliders, LogOut, ArrowUpRight } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth.js';
 import { cn } from '../../lib/utils.js';
+import { ConfirmDialog } from '../ui/ConfirmDialog.js';
 
 interface SidebarProps {
   onNavigate?: () => void;
@@ -44,6 +46,7 @@ const focusRing =
 
 export function Sidebar({ onNavigate, className }: SidebarProps) {
   const { admin, logout } = useAuth();
+  const [showSignoutConfirm, setShowSignoutConfirm] = useState(false);
   const initial = (admin?.email?.[0] ?? 'A').toUpperCase();
 
   return (
@@ -157,7 +160,7 @@ export function Sidebar({ onNavigate, className }: SidebarProps) {
           </div>
           <button
             type="button"
-            onClick={logout}
+            onClick={() => setShowSignoutConfirm(true)}
             aria-label="Sign out"
             title="Sign out"
             className={cn(
@@ -169,6 +172,23 @@ export function Sidebar({ onNavigate, className }: SidebarProps) {
           </button>
         </div>
       </div>
+
+      {/* Sign out confirmation popup */}
+      <ConfirmDialog
+        isOpen={showSignoutConfirm}
+        onClose={() => setShowSignoutConfirm(false)}
+        onConfirm={() => {
+          setShowSignoutConfirm(false);
+          logout();
+        }}
+        title="Sign out"
+        description="Are you sure you want to sign out of the admin panel? You will need to sign in again to access the dashboard."
+        confirmLabel="Sign out"
+        cancelLabel="Cancel"
+        variant="danger"
+      />
     </aside>
   );
 }
+
+export default Sidebar;

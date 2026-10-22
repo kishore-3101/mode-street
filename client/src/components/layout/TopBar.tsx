@@ -1,5 +1,6 @@
+import { Link } from 'react-router-dom';
 import { Menu } from 'lucide-react';
-import logoImg from '../../assets/logo.png';
+import navbarLogo from '../../assets/navbar-logo.png';
 
 interface TopBarProps {
   onOpenMobileMenu: () => void;
@@ -18,14 +19,13 @@ export function TopBar({ onOpenMobileMenu }: TopBarProps) {
           <Menu className="w-6 h-6" />
         </button>
 
-        <div className="flex items-center gap-2">
-          <div className="bg-cream-surface rounded-md p-1 border border-sand shadow-2xs h-8 flex items-center">
-            <img src={logoImg} alt="Mode Street" className="h-6 w-auto object-contain" />
-          </div>
-          <span className="font-serif font-bold text-lg text-espresso tracking-tight">
-            Mode Street
-          </span>
-        </div>
+        <Link
+          to="/admin/products"
+          className="flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel rounded"
+          aria-label="Mode Street Admin"
+        >
+          <img src={navbarLogo} alt="Mode Street" className="h-7 sm:h-8 w-auto object-contain" />
+        </Link>
       </div>
 
       <span className="text-[10px] font-sans uppercase tracking-widest bg-sand/40 text-espresso/80 font-bold px-2 py-0.5 rounded">

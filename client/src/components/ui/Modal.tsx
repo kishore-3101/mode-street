@@ -1,4 +1,5 @@
 import { useEffect, useRef, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { cn } from '../../lib/utils.js';
 
@@ -44,6 +45,7 @@ export function Modal({
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
+  if (typeof document === 'undefined') return null;
 
   const maxWidths = {
     sm: 'max-w-sm',
@@ -53,7 +55,7 @@ export function Modal({
     '2xl': 'max-w-2xl',
   };
 
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
@@ -96,6 +98,7 @@ export function Modal({
         {/* Content */}
         <div className="p-5 overflow-y-auto">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

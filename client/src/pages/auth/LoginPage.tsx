@@ -1,8 +1,9 @@
 import { useState, type FormEvent } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth.js';
 import logoImg from '../../assets/logo.png';
+import navbarLogo from '../../assets/navbar-logo.png';
 import { getApiErrorMessage } from '../../lib/utils.js';
 
 const labelClass = 'mb-1.5 block text-sm font-medium text-espresso';
@@ -68,16 +69,24 @@ export function LoginPage() {
       <main className="flex min-h-screen flex-col px-6 py-8 sm:px-12">
         <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
           <div className="flex flex-1 flex-col justify-center">
-            {/* Logo on mobile */}
-            <img
-              src={logoImg}
-              alt="Mode Street"
-              className="mb-10 h-16 w-auto self-start object-contain mix-blend-multiply lg:hidden"
-            />
+            {/* Logo on mobile and tablet */}
+            <div className="mb-8 flex justify-center lg:hidden">
+              <Link
+                to="/"
+                className="inline-flex items-center rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-camel"
+                aria-label="Mode Street Home"
+              >
+                <img
+                  src={navbarLogo}
+                  alt="Mode Street"
+                  className="h-10 sm:h-12 w-auto object-contain"
+                />
+              </Link>
+            </div>
 
             {/* Bordered box with label sitting on the top border */}
             <section className="relative border-[1.5px] border-espresso/60 px-6 pb-8 pt-10 sm:px-8">
-              <span className="absolute -top-2.5 left-5 bg-cream px-3 text-xs font-semibold uppercase tracking-wider text-espresso/70">
+              <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 lg:left-5 lg:translate-x-0 whitespace-nowrap bg-cream px-3 text-xs font-semibold uppercase tracking-wider text-espresso/70">
                 Admin console
               </span>
 
